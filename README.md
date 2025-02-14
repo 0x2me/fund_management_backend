@@ -72,18 +72,42 @@ To deploy Solidity contracts using Foundry to the Anvil Ethereum node:
    ```
 
 
-## Project Architecture Overview
+## Project Architecture Overview And Design Decisions
 
-The backend is structured using NestJS, a progressive Node.js framework, for building efficient and scalable server-side applications. Here are the key components of our architecture:
+### How It Works
 
-- **NestJS Framework**: Chosen for its robust structure and extensibility, NestJS helps in organizing the codebase with clear modularity and is equipped with powerful decorators for enhancing functionality.
+1. **User Interaction**
+   - Users call `/investments` or `/redemptions` endpoints
+   - Provide their address and amount
+
+2. **System Processing**
+   - Backend executes blockchain transactions using system wallet
+   - Records transaction in database with 'pending' status
+   - Returns transaction hash to user
+
+3. **Transaction Monitoring**
+   - Background service monitors pending transactions
+   - Updates database when transactions have 6 confirmations
+   - Handles both investments and redemptions
+
+### Tech Stack
+- **NestJS Framework**: Chosen for its robust structure and extensibility, NestJS helps in organizing the codebase with clear modularity and uses decorators for clean code.
 
 - **Blockchain Service**: This service handles all blockchain interactions. It communicates with Ethereum-based smart contracts for transaction processing and other on-chain activities.
 
-- **PostgreSQL Database**: All transaction data received from the blockchain is persisted in a PostgreSQL database, ensuring data integrity and providing a reliable storage solution.
+- **PostgreSQL Database**: All transaction data received from the blockchain is persisted in a PostgreSQL database
 
-- **Transaction Listener**: A dedicated listener monitors the blockchain for confirmations of transactions. It ensures that each transaction is confirmed at least 6 times to guarantee its finality before updating the system state.
+- **Transaction Listener**: A dedicated listener monitors the blockchain for confirmations of transactions. It ensures that each transaction is confirmed at least 6 times to guarantee its finality before updating the db state.
 
-- **NestJS Annotations**: We utilize NestJS's custom decorators to efficiently manage and track fund metrics, simplifying the process of data aggregation and manipulation.
+- **NestJS Annotations**: We use NestJS's custom decorators to efficiently manage and track fund metrics cache
+
+- **Foundry**: We use Foundry to compile and deploy the smart contracts to the local anvil node.
 
 
+
+### Future Improvements Needed
+- Will need a way to recover the db in case it goes out of sync with the blockchain
+- Need to handle chain reorgs
+- Allow sure to execute tx with own wallet instead of system wallet
+- Add an auth system
+- Need to have extra accountancy checks to make sure the system is working as expected
