@@ -1,99 +1,89 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# Fund Management Backend
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+This project serves as the backend system for a fund management application. It handles all data processing, storage, and API services required to manage investment funds effectively. The system is built with robustness and scalability in mind, providing a solid foundation for financial operations.
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+## Prerequisites
 
-## Description
+Before you begin, ensure you have met the following requirements:
+- Docker installed
+- Node.js installed (specify version if necessary)
+- PostgreSQL installed or accessible via Docker
+- Anvil installed for blockchain simulation (optional for development)
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+## Setup
 
-## Project setup
+### Running PostgreSQL with Docker
 
-```bash
-$ npm install
-```
+To run a PostgreSQL database locally using Docker, follow these steps:
 
-## Compile and run the project
+1. Pull the PostgreSQL image:
+   ```bash
+   docker pull postgres
+   ```
+2. Run the PostgreSQL container:
+   ```bash
+   docker run --name some-postgres -e POSTGRES_PASSWORD=mysecretpassword -d postgres
+   ```
+3. Run migrations for drizzle:
+   ```bash
+   npm run db:push
+   ```
 
-```bash
-# development
-$ npm run start
+### Running the Nest.js Application
 
-# watch mode
-$ npm run start:dev
+1. Install dependencies:
+   ```bash
+   npm install
+   ```
+2. Start the Nest.js application:
+   ```bash
+   npm start
+   ```
 
-# production mode
-$ npm run start:prod
-```
+### Running Anvil for Blockchain Simulation
 
-## Run tests
+Anvil is a local Ethereum node designed for development. To run Anvil:
 
-```bash
-# unit tests
-$ npm run test
+1. Install Anvil if not already installed:
+   ```bash
+   npm install -g @foundry-rs/anvil
+   ```
+2. Start Anvil:
+   ```bash
+   anvil
+   ```
 
-# e2e tests
-$ npm run test:e2e
+### Deploying Solidity Contracts to Anvil
 
-# test coverage
-$ npm run test:cov
-```
+To deploy Solidity contracts using Foundry to the Anvil Ethereum node:
 
-## Deployment
+1. Ensure Foundry is installed:
+   ```bash
+   curl -L https://foundry.paradigm.xyz | bash
+   foundryup
+   ```
+2. Compile your Solidity contracts with Foundry:
+   ```bash
+   forge build
+   ```
+3. Deploy the compiled contracts to Anvil:
+   ```bash
+   forge create --rpc-url http://localhost:8545 src/blockchain/FundToken.sol:FundToken
+   ```
 
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
 
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
+## Project Architecture Overview
 
-```bash
-$ npm install -g mau
-$ mau deploy
-```
+The backend is structured using NestJS, a progressive Node.js framework, for building efficient and scalable server-side applications. Here are the key components of our architecture:
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+- **NestJS Framework**: Chosen for its robust structure and extensibility, NestJS helps in organizing the codebase with clear modularity and is equipped with powerful decorators for enhancing functionality.
 
-## Resources
+- **Blockchain Service**: This service handles all blockchain interactions. It communicates with Ethereum-based smart contracts for transaction processing and other on-chain activities.
 
-Check out a few resources that may come in handy when working with NestJS:
+- **PostgreSQL Database**: All transaction data received from the blockchain is persisted in a PostgreSQL database, ensuring data integrity and providing a reliable storage solution.
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+- **Transaction Listener**: A dedicated listener monitors the blockchain for confirmations of transactions. It ensures that each transaction is confirmed at least 6 times to guarantee its finality before updating the system state.
 
-## Support
+- **NestJS Annotations**: We utilize NestJS's custom decorators to efficiently manage and track fund metrics, simplifying the process of data aggregation and manipulation.
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-## Stay in touch
-
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
-
-## License
-
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
